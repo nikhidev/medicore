@@ -1,0 +1,99 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: medicore
+      POSTGRES_USER: medicore
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U medicore -d medicore]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  redis:
+    image: redis:7-alpine
+    command:
+      [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--maxmemory-policy",
+        "noeviction",
+      ]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  analytics:
+    build: ./analytics
+    environment:
+      ANALYTICS_KEY: ${ANALYTICS_KEY:?Set ANALYTICS_KEY}
+    healthcheck:
+      test:
+        [
+          CMD,
+          python,
+          -c,
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+  api:
+    build:
+      context: .
+      target: api
+    environment:
+      API_HOST: 0.0.0.0
+      NOTIFICATION_MODE: external
+      DATABASE_URL: postgresql://medicore:${POSTGRES_PASSWORD}@postgres:5432/medicore
+      ANALYTICS_URL: http://analytics:8000
+      ANALYTICS_KEY: ${ANALYTICS_KEY}
+      DEMO_SEED: ${DEMO_SEED:-true}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      APP_ORIGINS: ${APP_ORIGINS:-http://127.0.0.1:3080,http://localhost:3080}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://localhost:4000/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+  worker:
+    build:
+      context: .
+      target: api
+    command: [node, api/worker.mjs]
+    restart: on-failure
+    environment:
+      DATABASE_URL: postgresql://medicore:${POSTGRES_PASSWORD}@postgres:5432/medicore
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      api:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  web:
+    build:
+      context: .
+      target: web
+    ports:
+      - "127.0.0.1:3080:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+volumes:
+  pgdata:
+  redisdata:

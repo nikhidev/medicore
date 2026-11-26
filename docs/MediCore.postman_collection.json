@@ -1,0 +1,477 @@
+{
+  "info": {
+    "name": "MediCore local API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:4080"
+    }
+  ],
+  "item": [
+    {
+      "name": "Liveness",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Database readiness",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/ready"
+      }
+    },
+    {
+      "name": "Create a session",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/login",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"reception@medicore.test\",\n  \"password\": \"MediCoreDemo!\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Read current profile",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/me"
+      }
+    },
+    {
+      "name": "Rotate the session",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/refresh"
+      }
+    },
+    {
+      "name": "Revoke the session",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/logout"
+      }
+    },
+    {
+      "name": "List departments and providers",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/directory"
+      }
+    },
+    {
+      "name": "List staff",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/staff"
+      }
+    },
+    {
+      "name": "List departments",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/departments"
+      }
+    },
+    {
+      "name": "Register a department",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/departments",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Training department\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Create a staff account",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/staff",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Synthetic Staff\",\n  \"email\": \"synthetic@medicore.test\",\n  \"password\": \"LocalDemoOnly-Example\",\n  \"role\": \"nurse\",\n  \"departmentId\": \"cardiology\"\n}"
+        }
+      }
+    },
+    {
+      "name": "List upcoming provider availability",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/schedules"
+      }
+    },
+    {
+      "name": "Add provider availability",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/schedules/doctor",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"start\": \"2026-12-01T08:00:00+05:30\",\n  \"end\": \"2026-12-01T18:00:00+05:30\"\n}"
+        }
+      }
+    },
+    {
+      "name": "List authorized patient records",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/patients"
+      }
+    },
+    {
+      "name": "Register a synthetic patient",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/patients",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Sample Patient\",\n  \"birthDate\": \"1994-11-05\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Update patient permissions",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/v1/patients/p1/consent",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"clinical\": true,\n  \"exchange\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "List, search, and filter the schedule",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/appointments"
+      }
+    },
+    {
+      "name": "Book a provider and patient",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/appointments",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patientId\": \"p1\",\n  \"providerId\": \"doctor\",\n  \"start\": \"2026-12-01T15:00:00+05:30\",\n  \"end\": \"2026-12-01T15:30:00+05:30\",\n  \"reason\": \"Synthetic follow-up\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Check in or cancel",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/v1/appointments/a3",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"checked_in\"\n}"
+        }
+      }
+    },
+    {
+      "name": "List authorized waitlist entries",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/waitlist"
+      }
+    },
+    {
+      "name": "Join the waitlist",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/waitlist",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patientId\": \"p1\",\n  \"providerId\": \"doctor\",\n  \"reason\": \"Earlier time requested\"\n}"
+        }
+      }
+    },
+    {
+      "name": "List authorized encounters",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/encounters"
+      }
+    },
+    {
+      "name": "Open an encounter",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/encounters",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"appointmentId\": \"a3\",\n  \"notes\": \"Synthetic visit notes\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Read an encounter and related records",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/encounters/e1"
+      }
+    },
+    {
+      "name": "Update or close an encounter",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/v1/encounters/e2",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"notes\": \"Synthetic visit complete\",\n  \"status\": \"closed\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Record a supplied diagnosis",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/encounters/e2/diagnoses",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"DEMO-1\",\n  \"description\": \"Synthetic training entry\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Create a prescription draft",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/encounters/e2/prescriptions",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"medication\": \"Training example\",\n  \"dose\": \"Demo dose\",\n  \"instructions\": \"Synthetic record\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Issue or cancel a draft",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/v1/prescriptions/replace-with-draft-id",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"issued\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Order a lab test",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/encounters/e2/labs",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"test\": \"Glucose\"\n}"
+        }
+      }
+    },
+    {
+      "name": "List authorized lab orders and results",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/labs"
+      }
+    },
+    {
+      "name": "Collect a sample",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/v1/labs/l2",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"collected\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Enter a result",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/labs/l2/result",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"value\": 92,\n  \"unit\": \"mg/dL\",\n  \"low\": 80,\n  \"high\": 110\n}"
+        }
+      }
+    },
+    {
+      "name": "List authorized invoices",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/invoices"
+      }
+    },
+    {
+      "name": "Create an invoice",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/v1/invoices",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"appointmentId\": \"a3\",\n  \"description\": \"Synthetic consultation\",\n  \"cents\": 12000\n}"
+        }
+      }
+    },
+    {
+      "name": "Mark paid or void",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/v1/invoices/i2",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"paid\"\n}"
+        }
+      }
+    },
+    {
+      "name": "List audit history",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/audit"
+      }
+    },
+    {
+      "name": "Inspect notification sandbox deliveries",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/notifications"
+      }
+    },
+    {
+      "name": "Generate an analytics report",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/reports"
+      }
+    },
+    {
+      "name": "Export a consent-gated FHIR resource",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/v1/fhir/Observation/l1"
+      }
+    }
+  ]
+}
